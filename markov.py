@@ -1,4 +1,5 @@
 import doctest
+from random import choice
 
 
 def pull_text(file_path):
@@ -46,10 +47,31 @@ def make_chains(text):
         else:
             chains[(text[i], text[i + 1])] = [text[i + 2]]
 
-    print chains
+    return chains
 
 
-# construct tweets - use while loop for now
+def construct_tweet(chains):
+    """Use dictionary of chains to construct new tweets.
+
+    >>> construct_tweet(make_chains(strip_text(pull_text("test.txt"))))
+
+    """
+
+    first_key = choice(chains.keys())
+    new_key = first_key
+
+    tweet = [first_key[0], first_key[1]]
+
+    while new_key in chains and len(tweet) < 10:
+        print "yuussss"
+        next_word = choice(chains[new_key])
+        tweet.append(next_word)
+        print tweet
+        new_key = (tweet[-2], tweet[-1])
+
+    return tweet
+
+
 
 
 if __name__ == "__main__":
