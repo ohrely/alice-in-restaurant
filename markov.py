@@ -2,17 +2,20 @@ import doctest
 from random import choice
 
 
-def pull_text(file_path):
+def pull_text(filenames):
     """Open and read file with source text.
 
-    >>> pull_text("test.txt")
+    >>> pull_text(["test.txt"])
     'All mimsy were the borogroves\\nAnd the mome raths outgrabe. And the mome raths outgrabe.'
     """
 
-    with open(file_path) as source_text:
-        read_text = source_text.read()
+    text = ""
 
-    return read_text
+    for filename in filenames:
+        source_text = open(filename)
+        text = text + source_text.read()
+
+    return text
 
 
 def strip_text(text):
@@ -21,10 +24,12 @@ def strip_text(text):
     TODO: May choose to reintroduce some of these characters later.
     TODO: Modularity!
 
-    >>> strip_text(pull_text("test.txt"))
+    >>> strip_text(pull_text(["test.txt"]))
     ['All', 'mimsy', 'were', 'the', 'borogroves', 'And', 'the', 'mome', 'raths', 'outgrabe.', 'And', 'the', 'mome', 'raths', 'outgrabe.']
     """
 
+    text = "".join(text.split("("))
+    text = "".join(text.split(")"))
     text = " ".join(text.split("\n"))
     text = " ".join(text.split("-"))
     text = text.split()
@@ -34,9 +39,6 @@ def strip_text(text):
 
 def make_chains(text):
     """Break text down into chains.  Store in dictionary.
-
-    >>> make_chains(strip_text(pull_text("test.txt")))
-
     """
 
     chains = {}
@@ -52,9 +54,6 @@ def make_chains(text):
 
 def construct_tweet(chains):
     """Use dictionary of chains to construct new tweets.
-
-    >>> construct_tweet(make_chains(strip_text(pull_text("test.txt"))))
-
     """
 
     first_key = choice(chains.keys())
@@ -62,18 +61,20 @@ def construct_tweet(chains):
 
     tweet = [first_key[0], first_key[1]]
 
-    while new_key in chains and len(tweet) < 10:
-        print "yuussss"
+    while new_key in chains and len(tweet) < 15:
         next_word = choice(chains[new_key])
         tweet.append(next_word)
-        print tweet
         new_key = (tweet[-2], tweet[-1])
 
+    tweet = " ".join(tweet)
+
     return tweet
-
-
 
 
 if __name__ == "__main__":
 
     doctest.testmod(verbose=True)
+
+    corpus = pull_text(["restaurant.txt", "wonderland.txt"])
+    stripped = strip_text(corpus)
+    chains = make_chains(stripped)
