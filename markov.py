@@ -1,3 +1,5 @@
+import twitter
+import os
 import doctest
 from random import choice
 
@@ -75,6 +77,17 @@ if __name__ == "__main__":
 
     doctest.testmod(verbose=True)
 
+    api = twitter.Api(consumer_key=os.environ['TWITTER_CONSUMER_KEY'],
+                      consumer_secret=os.environ['TWITTER_CONSUMER_SECRET'],
+                      access_token_key=os.environ['TWITTER_ACCESS_TOKEN_KEY'],
+                      access_token_secret=os.environ['TWITTER_ACCESS_TOKEN_SECRET'])
+
+    # print api.VerifyCredentials()
+
     corpus = pull_text(["restaurant.txt", "wonderland.txt"])
     stripped = strip_text(corpus)
     chains = make_chains(stripped)
+    tweet = construct_tweet(chains)
+
+    status = api.PostUpdate(tweet)
+    print status.text
